@@ -48,19 +48,27 @@ static void err_handler (MPI_Comm *pcomm, int *perr, ...) {
 }
 
 void print_array_to_file (int *a, int len_a, char *filename) {
-    FILE *fp = fopen(filename, "w");
-    for (int i = 0; i < len_a; ++i) {
-        fprintf(fp, "%d ", a[i]);
-    }
-    fclose(fp);
+    // FILE *fp = fopen(filename, "w");
+    // for (int i = 0; i < len_a; ++i) {
+    //      fprintf(fp, "%d ", a[i]);
+    // }
+    // fclose(fp);
+    MPI_File fp;
+    MPI_File_open(MPI_COMM_SELF, filename, MPI_MODE_CREATE|MPI_MODE_WRONLY, MPI_INFO_NULL, &fp);
+    MPI_File_write(fp, a, len_a, MPI_INT, MPI_STATUS_IGNORE);
+    MPI_File_close(&fp);
 }
 
 void read_array_from_file (int *a, int len_a, char *filename) {
-    FILE *fp = fopen(filename, "r");
-    for (int i = 0; i < len_a; ++i) {
-        fscanf(fp, "%d", &a[i]);
-    }
-    fclose(fp);
+    // FILE *fp = fopen(filename, "r");
+    // for (int i = 0; i < len_a; ++i) {
+    //     fscanf(fp, "%d", &a[i]);
+    // }
+    // fclose(fp);
+    MPI_File fp;
+    MPI_File_open(MPI_COMM_SELF, filename, MPI_MODE_RDONLY, MPI_INFO_NULL, &fp);
+    MPI_File_read(fp, a, len_a, MPI_INT, MPI_STATUS_IGNORE);
+    MPI_File_close(&fp);
 }
 
 void swap (int *x, int *y) {
